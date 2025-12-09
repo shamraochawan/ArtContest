@@ -5,7 +5,7 @@ import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBLmlRbxZI-6ONXS4PEUFMXCLUD-drBCTY",
+  apiKey: "AIzaSyCvd55aGskGTg_gDd1uPwGCKSRRti38rPg",
   authDomain: "art-contest-2025.firebaseapp.com",
   projectId: "art-contest-2025",
   storageBucket: "art-contest-2025.firebasestorage.app",
