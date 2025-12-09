@@ -16,10 +16,10 @@ header('Content-Type: application/json');
 // --- 2. DATABASE CONNECTION (UPDATE THESE!) ---
 
 
-$host = 'sql100.infinityfree.com';
-$user = 'if0_40541163';          // replace with your DB username
-$password = 'UVb1W4QZmdqoD';          // replace with your DB password
-$dbname = 'if0_40541163_XXX';    // replace with your DB name
+$host = '';
+$user = '';          // replace with your DB username
+$password = '';          // replace with your DB password
+$dbname = '';    // replace with your DB name
 
 $conn = new mysqli($host, $user, $password, $dbname);
 
