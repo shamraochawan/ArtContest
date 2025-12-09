@@ -1,23 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Simulate loading screen
+    // 1. Loading Screen Logic
     setTimeout(function() {
-        document.getElementById('loadingScreen').style.opacity = '0';
-        setTimeout(function() {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-        }, 500);
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(function() {
+                loadingScreen.style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+            }, 500);
+        }
     }, 1500);
 
-    // Mobile menu toggle
+    // 2. Mobile Menu Toggle
     const mobileMenu = document.getElementById('mobileMenu');
     const navMenu = document.getElementById('navMenu');
-    mobileMenu.addEventListener('click', function() {
-        this.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
-    });
+    if (mobileMenu && navMenu) {
+        mobileMenu.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+    }
 
-    // Login banner and state
+    // 3. Login / Auth Logic
     let isLoggedIn = localStorage.getItem('artecertLoggedIn') === 'true';
     const authBanner = document.createElement('div');
     authBanner.id = 'authBanner';
@@ -25,9 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     authBanner.textContent = 'Login required to register or participate';
     document.body.prepend(authBanner);
 
-    // Update auth nav link
     function updateAuthUI() {
-        // FIXED: Updated path to match your actual file 'Login/login.html'
         const authLink = document.querySelector('.nav-item a[href="Login/login.html"], .nav-item a[href="#"]');
         
         if (authLink) {
@@ -38,13 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     localStorage.removeItem('artecertLoggedIn');
                     isLoggedIn = false;
-                    updateAuthUI(); // Refresh nav state
-                    window.location.reload(); // Reload to reset state cleanly
+                    updateAuthUI();
+                    window.location.reload();
                 };
                 authBanner.classList.remove('show');
             } else {
                 authLink.textContent = 'Login';
-                // FIXED: Updated path to match 'Login/login.html'
                 authLink.href = 'Login/login.html'; 
                 authLink.onclick = null;
             }
@@ -52,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     updateAuthUI();
 
-    // Handle login redirect logic (if returning from login page)
     if (window.location.search.includes('login=success')) {
         localStorage.setItem('artecertLoggedIn', 'true');
         isLoggedIn = true;
@@ -60,13 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAuthUI();
     }
 
-    // Smooth scroll + auth check on nav click
+    // 4. Smooth Scroll & Navigation
     document.querySelectorAll('.nav-item a').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             
-            // FIXED: Logic to detect Login page. 
-            // If href contains "Login" (case insensitive) OR doesn't start with #, let it open normally.
             if (href.toLowerCase().includes('login') || !href.startsWith('#')) {
                 return; 
             }
@@ -75,19 +74,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             e.preventDefault();
 
-            // Restricted sections logic
             if ((href === '#register' || this.textContent === 'Participate Now') && !isLoggedIn) {
                 authBanner.classList.add('show');
                 setTimeout(() => authBanner.classList.remove('show'), 3000);
                 return;
             }
 
-            // Close mobile nav
-            mobileMenu.classList.remove('active');
-            navMenu.classList.remove('active');
+            if (mobileMenu) mobileMenu.classList.remove('active');
+            if (navMenu) navMenu.classList.remove('active');
             document.body.style.overflow = '';
 
-            // Handle Scrolling
             const targetSection = document.querySelector(href);
             if (targetSection) {
                 document.querySelectorAll('.section').forEach(section => section.classList.remove('active'));
@@ -101,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Participate Now logic
     const participateBtn = document.getElementById('participateBtn');
     if (participateBtn) {
         participateBtn.addEventListener('click', function(e) {
@@ -111,13 +106,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => authBanner.classList.remove('show'), 3000);
                 return;
             }
-            // Trigger the click on the register link to handle navigation
             const registerLink = document.querySelector('.nav-item a[href="#register"]');
             if(registerLink) registerLink.click();
         });
     }
 
-    // Artwork preview logic
+    // 5. Artwork Preview Logic
     const artworkInput = document.getElementById('artwork_path');
     const previewContainer = document.getElementById('previewContainer');
     
@@ -152,13 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form submission logic
+    // --- 6. FORM SUBMISSION LOGIC (UPDATED FOR INFINITYFREE) ---
     const registrationForm = document.getElementById('registrationForm');
     const successMessage = document.getElementById('successMessage');
 
     if (registrationForm) {
         registrationForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+            e.preventDefault(); // Stop the 405 error
 
             if (!isLoggedIn) {
                 authBanner.classList.add('show');
@@ -171,32 +165,44 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Processing...';
 
-            fetch('connect.php', {
+            // ⚠️ IMPORTANT: Replace the URL below with your InfinityFree link!
+            // Example: 'http://shamraochawan.infinityfreeapp.com/connect.php'
+            const apiUrl = 'http://arte-cert.kesug.com/connect.php'; 
+
+            fetch(apiUrl, {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.text())
+            .then(response => response.json()) // CHANGED: We now expect JSON, not text
             .then(data => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Entry';
 
-                if (data.trim() === 'success') {
-                    successMessage.style.display = 'block';
-                    successMessage.textContent = 'Registration successful! Your E-Certificate will be emailed to you shortly.';
+                // CHANGED: Check data.status instead of text string
+                if (data.status === 'success') {
+                    if (successMessage) {
+                        successMessage.style.display = 'block';
+                        successMessage.textContent = data.message; // Use message from PHP
+                    } else {
+                        alert(data.message);
+                    }
+
                     registrationForm.reset();
                     if(previewContainer) previewContainer.innerHTML = '';
 
                     setTimeout(() => {
-                        successMessage.style.display = 'none';
+                        if (successMessage) successMessage.style.display = 'none';
                     }, 5000);
                 } else {
-                    alert('Error: ' + data);
+                    // Show specific error from PHP
+                    alert('Error: ' + data.message);
                 }
             })
             .catch(error => {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Entry';
-                alert('An error occurred: ' + error);
+                console.error("Fetch Error:", error);
+                alert('Connection Failed. Check if InfinityFree link is correct.');
             });
         });
     }
