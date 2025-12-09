@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // ⚠️ IMPORTANT: Replace the URL below with your InfinityFree link!
             // Example: 'http://shamraochawan.infinityfreeapp.com/connect.php'
-            const apiUrl = 'https://arte-cert.kesug.com/connect.php'; 
+            const apiUrl = 'connect.php'; 
 
             fetch(apiUrl, {
                 method: 'POST',
