@@ -1,5 +1,5 @@
 // Import the config from the parent folder
-import { auth } from "../firebase-config.js";
+import { auth } from "../firebaseconfig.js";
 import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const signupForm = document.getElementById('signup-form');
